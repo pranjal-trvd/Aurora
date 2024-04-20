@@ -3,10 +3,13 @@ import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants';
 import FormField from '../../components/FormField';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import CustomButton from './../../components/CustomButton';
+import { getCurrentUser, signIn } from '../../lib/appwrite';
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const SignIn = () => {
+    const { setUser, setIsLoggedIn } = useGlobalContext();
     const [isSubmitting, setSubmitting] = useState(false);
     const [form, setForm] = useState({
         email: "",
@@ -20,19 +23,19 @@ const SignIn = () => {
 
         setSubmitting(true);
 
-        // try {
-        //     await signIn(form.email, form.password);
-        //     const result = await getCurrentUser();
-        //     setUser(result);
-        //     setIsLogged(true);
+        try {
+            await signIn(form.email, form.password);
+            const result = await getCurrentUser();
+            setUser(result);
+            setIsLoggedIn(true);
 
-        //     Alert.alert("Success", "User signed in successfully");
-        //     router.replace("/home");
-        // } catch (error) {
-        //     Alert.alert("Error", error.message);
-        // } finally {
-        //     setSubmitting(false);
-        // }
+            Alert.alert("Success", "User signed in successfully");
+            router.replace("/home");
+        } catch (error) {
+            Alert.alert("Error", error.message);
+        } finally {
+            setSubmitting(false);
+        }
     };
 
 
